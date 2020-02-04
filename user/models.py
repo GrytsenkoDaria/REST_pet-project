@@ -3,33 +3,22 @@ from django.conf import settings
 
 
 class Profile(models.Model):
+    class Role(models.IntegerChoices):
+        ADMIN = 0, 'Admin'
+        MANAGER = 1, 'Manager'
+        USER = 2, 'User'
+
+    class Status(models.IntegerChoices):
+        CREATED = 0, 'Created'
+        INVITED = 1, 'Invited'
+        ACTIVATED = 2, 'Activated'
+        ACTIVE = 3, 'Active'
+        BLOCKED = 4, 'Blocked'
+        DELETED = 5, 'Deleted'
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-
-    ADMIN = 0
-    MANAGER = 1
-    USER = 2
-    ROLE_CHOICES = [
-        (ADMIN, 'Admin'),
-        (MANAGER, 'Manager'),
-        (USER, 'User'),
-    ]
-    role = models.IntegerField(choices=ROLE_CHOICES,)
-
-    CREATED = 0
-    INVITED = 1
-    ACTIVATED = 2
-    ACTIVE = 3
-    BLOCKED = 4
-    DELETED = 5
-    STATUS_CHOICES = [
-        (CREATED, 'Created'),
-        (INVITED, 'Invited'),
-        (ACTIVATED, 'Activated'),
-        (ACTIVE, 'Active'),
-        (BLOCKED, 'Blocked'),
-        (DELETED, 'Deleted'),
-    ]
-    status = models.IntegerField(choices=STATUS_CHOICES,)
+    role = models.IntegerField(choices=Role.choices,)
+    status = models.IntegerField(choices=Status.choices,)
