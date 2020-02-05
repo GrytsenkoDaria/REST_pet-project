@@ -1,18 +1,10 @@
 from django.db import models
-from django.conf import settings
-from django.utils.translation import gettext as _
+from .choices import Status
 
 
 class Project(models.Model):
-    class Status(models.IntegerChoices):
-        CREATED = (0, _('Created'))
-        ACTIVE = (1, _('Active'))
-        PAUSED = (2, _('Paused'))
-        CLOSED = (3, _('Closed'))
-
-    name = models.CharField(max_length=100)  # need to specify max_length?
+    name = models.CharField(max_length=255)
     users = models.ManyToManyField(
-        # why 'users' not 'user'? it is always singular
         'user.Profile',
         through='ProjectUser'
     )
@@ -31,19 +23,17 @@ class ProjectUser(models.Model):
         'user.Profile',
         on_delete=models.CASCADE
     )
-    is_ower = models.BooleanField(default=False)
+    is_owner = models.BooleanField(default=False)
 
 
 class Release(models.Model):
-    name = models.CharField(max_length=100)  # need to specify max_length?
-    status = models.IntegerField(choices=Project.Status.choices)
-    # can I adress to the Status in class Project above?
+    name = models.CharField(max_length=255)
+    status = models.IntegerField(choices=Status.choices)
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE
     )
-    start_time = models.DateTimeField(auto_now=True)
-    # should we set a start by 'auto_now' or let it be blank?
+    start_time = models.DateTimeField(blank=False)
     end_time = models.DateTimeField()
 
     def __str__(self):
@@ -51,13 +41,13 @@ class Release(models.Model):
 
 
 class Sprint(models.Model):
-    name = models.CharField(max_length=100)
-    status = models.IntegerField(choices=Project.Status.choices)
+    name = models.CharField(max_length=255)
+    status = models.IntegerField(choices=Status.choices)
     release = models.ForeignKey(
-        Project,
+        Release,
         on_delete=models.CASCADE
     )
-    start_time = models.DateTimeField()
+    start_time = models.DateTimeField(blank=False)
     end_time = models.DateTimeField()
 
     def __str__(self):
