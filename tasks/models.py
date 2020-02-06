@@ -1,31 +1,44 @@
 from django.db import models
-from django.utils.translation import gettext as _
+from choices import TaskStatus
 
 
 class Task(models.Model):
-    class Status(models.IntegerChoices):
-        TO_DO = (0, _('To do'))
-        IN_PROGRESS = (1, _('In progress'))
-        READY_FOR_REVIEW = (2, _('Ready for review'))
-        REQUIRES_TESTING = (3, _('Requires testing'))
-        IN_TESTING = (4, _('In testing'))
-        DONE = (5, _('Done'))
-
     name = models.CharField(max_length=255)
     description = models.TextField()
-    assignee = models.ForeignKey('user.Profile', on_delete=models.CASCADE)
-    initiator = models.ForeignKey('user.Profile', on_delete=models.CASCADE)
-    status = models.IntegerField(choices=Status.choices, )
-    project = models.ForeignKey('project.Project', on_delete=models.CASCADE)
-    release = models.ForeignKey('project.Release', on_delete=models.CASCADE)
-    sprint = models.ForeignKey('project.Sprint', on_delete=models.CASCADE)
+    assignee = models.ForeignKey(
+        'user.Profile',
+        on_delete=models.CASCADE,
+        related_name='assigned_tasks'
+    )
+    initiator = models.ForeignKey(
+        'user.Profile',
+        on_delete=models.CASCADE,
+        related_name='created_tasks'
+    )
+    status = models.IntegerField(choices=TaskStatus.choices)
+    project = models.ForeignKey(
+        'project.Project',
+        on_delete=models.CASCADE,
+        related_name='tasks'
+    )
+    release = models.ForeignKey(
+        'project.Release',
+        on_delete=models.CASCADE,
+        related_name='tasks_releases'
+        )
+    sprint = models.ForeignKey(
+        'project.Sprint',
+        on_delete=models.CASCADE,
+        related_name='tasks_sprints'
+    )
     parent_task = models.ForeignKey(
         'self',
         null=True,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='sub_tasks'
     )
     estimation = models.IntegerField(null=True)
-    created = models.DateTimeField(blank=False)
+    created = models.DateTimeField()
     updated = models.DateTimeField()
 
     def __str__(self):
@@ -36,7 +49,12 @@ class Comment(models.Model):
     text = models.TextField()
     owner = models.ForeignKey(
         'user.Profile',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='created_comments'
     )
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey(
+        Task,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
     created = models.DateTimeField()
