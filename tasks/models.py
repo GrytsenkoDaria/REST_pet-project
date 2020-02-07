@@ -24,12 +24,12 @@ class Task(models.Model):
     release = models.ForeignKey(
         'project.Release',
         on_delete=models.CASCADE,
-        related_name='tasks_releases'
+        related_name='tasks'
         )
     sprint = models.ForeignKey(
         'project.Sprint',
         on_delete=models.CASCADE,
-        related_name='tasks_sprints'
+        related_name='tasks'
     )
     parent_task = models.ForeignKey(
         'self',
