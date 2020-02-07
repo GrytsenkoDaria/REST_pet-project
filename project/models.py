@@ -1,12 +1,13 @@
 from django.db import models
-from .choices import Status
+from choices import Status
 
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
     users = models.ManyToManyField(
         'user.Profile',
-        through='ProjectUser'
+        through='ProjectUser',
+        related_name='projects'
     )
     status = models.IntegerField(choices=Status.choices)
 
@@ -17,11 +18,11 @@ class Project(models.Model):
 class ProjectUser(models.Model):
     project = models.ForeignKey(
         Project,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     user = models.ForeignKey(
         'user.Profile',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     is_owner = models.BooleanField(default=False)
 
@@ -31,9 +32,10 @@ class Release(models.Model):
     status = models.IntegerField(choices=Status.choices)
     project = models.ForeignKey(
         Project,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='releases'
     )
-    start_time = models.DateTimeField(blank=False)
+    start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
     def __str__(self):
@@ -45,9 +47,10 @@ class Sprint(models.Model):
     status = models.IntegerField(choices=Status.choices)
     release = models.ForeignKey(
         Release,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='sprints'
     )
-    start_time = models.DateTimeField(blank=False)
+    start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
     def __str__(self):
