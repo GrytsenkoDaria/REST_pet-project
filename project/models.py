@@ -5,7 +5,7 @@ from choices import Status
 class Project(models.Model):
     name = models.CharField(max_length=255)
     users = models.ManyToManyField(
-        'user.Profile',
+        'user.User',
         through='ProjectUser',
         related_name='projects'
     )
@@ -21,7 +21,7 @@ class ProjectUser(models.Model):
         on_delete=models.CASCADE,
     )
     user = models.ForeignKey(
-        'user.Profile',
+        'user.User',
         on_delete=models.CASCADE,
     )
     is_owner = models.BooleanField(default=False)

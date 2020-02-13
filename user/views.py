@@ -1,9 +1,8 @@
-from rest_framework import generics, permissions
-from .models import Profile
-from .serializers import ProfileSerializer
+from rest_framework import generics
+from django.contrib.auth import get_user_model
+from .serializers import UserSerializer
 
 
 class UserList(generics.ListCreateAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer

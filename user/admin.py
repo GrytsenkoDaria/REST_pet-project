@@ -1,5 +1,5 @@
 from django.contrib import admin
-from user.models import Profile
+from user.models import User
 from project.models import ProjectUser
 from tasks.models import Task
 
@@ -15,11 +15,11 @@ class InitiatorTaskInline(admin.TabularInline):
     fk_name = 'assignee'
 
 
-class ProfileAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     inlines = (
         ProjectInline,
         InitiatorTaskInline,
     )
 
 
-admin.site.register(Profile, ProfileAdmin)
+admin.site.register(User, UserAdmin)

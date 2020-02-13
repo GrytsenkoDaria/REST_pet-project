@@ -1,27 +1,39 @@
 from rest_framework import serializers
-from user.models import Profile
-from choices import Role, UserStatus
+
+from user.models import User
 
 
-class ProfileSerializer(serializers.Serializer):
+class UserSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
-    user = serializers.RelatedField(source='profile', read_only=True)
-    role = serializers.ChoiceField(choices=Role.choices)
-    status = serializers.ChoiceField(choices=UserStatus.choices)
+    username = serializers.CharField(max_length=255)
+    password = serializers.CharField(
+        min_length=6,
+        write_only=True,
+        required=True
+    )
+    email = serializers.EmailField()
 
     def create(self, validated_data):
-        return Profile.objects.create(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        return user
 
-    def update(self, instance, validated_data):
-        instance.user = validated_data.get('user', instance.user)
-        instance.role = validated_data.get('role', instance.role)
-        instance.status = validated_data.get('status', instance.status)
+    def validate_email(self, email):
+        email_exist = (
+            User.objects.filter(email=email).exists()
+        )
+        if email_exist:
+            raise serializers.ValidationError(
+                'Such email is already used. Please, try another one'
+            )
 
-        instance.save()
-        return instance
+        return email
 
-
-# class ProfileSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Profile
-#         fields = '__all__'
+    def validate_username(self, username):
+        user_exist = (
+            User.objects.filter(username=username).exists()
+        )
+        if user_exist:
+            raise serializers.ValidationError(
+                'Such username already exists. Please, try another one'
+            )
+        return username
