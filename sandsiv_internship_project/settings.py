@@ -26,7 +26,7 @@ SECRET_KEY = '@lrv2$h*)u!82ag(0s*8tdf83z0645oaifc@r&g3b+weh_yo4m'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+from rest_framework.authtoken.apps import AuthTokenConfig
 
 # Application definition
 
@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
     'user',
     'project',
     'tasks',
@@ -52,6 +54,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
 
 ROOT_URLCONF = 'sandsiv_internship_project.urls'
 
@@ -82,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sandsiv_internship_project',
         'HOST': 'localhost',
-        'PORT': '8000',
+        'PORT': '3306',
         'USER': 'daria',
         'PASSWORD': '123',
     }
@@ -125,3 +136,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = "user.User"

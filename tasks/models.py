@@ -6,12 +6,12 @@ class Task(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     assignee = models.ForeignKey(
-        'user.Profile',
+        'user.User',
         on_delete=models.CASCADE,
         related_name='assigned_tasks'
     )
     initiator = models.ForeignKey(
-        'user.Profile',
+        'user.User',
         on_delete=models.CASCADE,
         related_name='created_tasks'
     )
@@ -48,7 +48,7 @@ class Task(models.Model):
 class Comment(models.Model):
     text = models.TextField()
     owner = models.ForeignKey(
-        'user.Profile',
+        'user.User',
         on_delete=models.CASCADE,
         related_name='created_comments'
     )
