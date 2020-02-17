@@ -1,8 +1,21 @@
 from rest_framework import generics
-from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.response import Response
+
 from .serializers import UserSerializer
+from .models import User
 
 
-class UserList(generics.ListCreateAPIView):
-    queryset = get_user_model().objects.all()
+class UserCreationView(generics.CreateAPIView):
+    authentication_classes = []
+    permission_classes = []
+
+    queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class UserLogout(generics.CreateAPIView):
+
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)

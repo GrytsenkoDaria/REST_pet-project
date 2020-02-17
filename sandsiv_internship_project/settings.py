@@ -26,7 +26,7 @@ SECRET_KEY = '@lrv2$h*)u!82ag(0s*8tdf83z0645oaifc@r&g3b+weh_yo4m'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+from rest_framework.authtoken.apps import AuthTokenConfig
 
 # Application definition
 
@@ -57,12 +57,10 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
