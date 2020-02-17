@@ -14,8 +14,8 @@ class UserCreationView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
-class UserLogout(generics.CreateAPIView):
+class UserLogout(generics.GenericAPIView):
 
     def post(self, request):
         request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_no_content)
