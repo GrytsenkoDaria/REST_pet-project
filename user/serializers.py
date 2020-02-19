@@ -37,3 +37,9 @@ class UserSerializer(serializers.Serializer):
                 'Such username already exists. Please, try another one'
             )
         return username
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = User
+        fields = ['id', 'username']
