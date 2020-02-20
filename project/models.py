@@ -9,7 +9,7 @@ class Project(models.Model):
         through='ProjectUser',
         related_name='projects'
     )
-    status = models.IntegerField(choices=Status.choices)
+    status = models.IntegerField(choices=Status.choices, default=0)
 
     def __str__(self):
         return self.name
