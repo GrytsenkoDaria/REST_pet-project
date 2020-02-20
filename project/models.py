@@ -29,7 +29,7 @@ class ProjectUser(models.Model):
 
 class Release(models.Model):
     name = models.CharField(max_length=255)
-    status = models.IntegerField(choices=Status.choices)
+    status = models.IntegerField(choices=Status.choices, default=0)
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
@@ -44,7 +44,7 @@ class Release(models.Model):
 
 class Sprint(models.Model):
     name = models.CharField(max_length=255)
-    status = models.IntegerField(choices=Status.choices)
+    status = models.IntegerField(choices=Status.choices, default=0)
     release = models.ForeignKey(
         Release,
         on_delete=models.CASCADE,

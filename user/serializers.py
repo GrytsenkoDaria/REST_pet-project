@@ -40,6 +40,6 @@ class UserSerializer(serializers.Serializer):
 
 
 class UserListSerializer(serializers.ModelSerializer):
-    class Meta():
+    class Meta:
         model = User
         fields = ['id', 'username']
