@@ -4,7 +4,7 @@ from project.models import Project, ProjectUser, Release
 from user.serializers import UserListSerializer
 
 
-class ProjectListSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ['id', 'name', 'status']
@@ -39,11 +39,11 @@ class ReleaseListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Release
-        fields = ['id', 'name', 'status', 'start_time', 'end_time']
+        fields = ['id', 'name', 'status', 'start_time', 'end_time', ]
         extra_kwargs = {
             'status': {'write_only': True, 'required': False},
             'start_time': {'write_only': True},
-            'end_time': {'write_only': True}
+            'end_time': {'write_only': True},
         }
 
     def create(self, validated_data):
@@ -54,9 +54,9 @@ class ReleaseListSerializer(serializers.ModelSerializer):
 
 
 class ReleaseDetailSerializer(serializers.ModelSerializer):
-    project = ProjectListSerializer(many=True, read_only=True)
+    project = ProjectSerializer()
 
     class Meta:
         lookup_field = 'id'
         model = Release
-        fields = ['id', 'name', 'status', 'projects', 'start_time', 'end_time']
+        fields = ['id', 'name', 'status', 'project', 'start_time', 'end_time']
