@@ -34,16 +34,13 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
 
 class ReleaseSerializer(serializers.ModelSerializer):
-    start_time = serializers.DateTimeField(required=True)
-    end_time = serializers.DateTimeField(required=True)
-
     class Meta:
         model = Release
         fields = ['id', 'name', 'status', 'start_time', 'end_time', ]
-        extra_kwargs = {  # ###########################################
+        extra_kwargs = {
             'status': {'write_only': True, 'required': False},
-            'start_time': {'write_only': True},
-            'end_time': {'write_only': True},
+            'start_time': {'write_only': True, 'required': True, },
+            'end_time': {'write_only': True, 'required': True, },
         }
 
     def create(self, validated_data):
@@ -86,7 +83,7 @@ class SprintDetailSerializer(serializers.ModelSerializer):
         model = Sprint
         fields = ['id', 'name', 'status', 'start_time', 'end_time', 'release']
         extra_kwargs = {
-            'status': {'write_only': True, 'required': False, },
-            'start_time': {'write_only': True, 'required': True, },
-            'end_time': {'write_only': True, 'required': True, },
+            'status': {'required': False, },
+            'start_time': {'required': True, },
+            'end_time': {'required': True, },
         }

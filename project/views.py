@@ -97,25 +97,38 @@ class SprintListView(generics.ListCreateAPIView):
     def get_queryset(self):
 
         release_id = self.kwargs.get('release_pk')
+        project_id = self.kwargs.get('project_pk')
 
         if (
             self.request.user.role == Role.ADMIN or
             self.request.user.is_superuser
         ):
-            queryset = Sprint.objects.filter(release_id=release_id)
+
+            release_ids = (
+                Release.objects
+                .filter(project_id=project_id)
+                .values_list('id', flat=True)
+            )
 
         else:
             user = self.request.user
             projects = user.projects.all()
-            project_id = self.kwargs.get('project_pk')
-            releases = Release.objects.filter(
-                project__in=projects,
-                project_id=project_id
-            )
+
+            release_ids = (
+                Release.objects
+                .filter(
+                    project__in=projects,
+                    project_id=project_id
+                )
+                .values_list('id', flat=True)
+                )
+
+        if int(release_id) in release_ids:
             queryset = Sprint.objects.filter(
                 release_id=release_id,
-                release__in=releases,
-                )
+            )
+        else:
+            queryset = Sprint.objects.none()
 
         return queryset
 
@@ -127,30 +140,32 @@ class SprintDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
 
         release_id = self.kwargs.get('release_pk')
+        project_id = self.kwargs.get('project_pk')
 
         if (
             self.request.user.role == Role.ADMIN or
             self.request.user.is_superuser
         ):
-            queryset = Sprint.objects.filter(release_id=release_id)
+            releases = Release.objects.filter(project_id=project_id)
 
         else:
             user = self.request.user
             projects = user.projects.all()
-            project_id = self.kwargs.get('project_pk')
+
             releases = Release.objects.filter(
                 project__in=projects,
                 project_id=project_id
             )
-            queryset = Sprint.objects.filter(
-                release_id=release_id,
-                release__in=releases,
-                )
+
+        queryset = Sprint.objects.filter(
+            release_id=release_id,
+            release__in=releases,
+            )
 
         return queryset
 
 
-class SprintProjectListView(generics.ListCreateAPIView):
+class SprintProjectListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated, IsAdminOrSuperuserOrManager]
     serializer_class = SprintSerializer
 
@@ -162,7 +177,6 @@ class SprintProjectListView(generics.ListCreateAPIView):
             self.request.user.is_superuser
         ):
             releases = Release.objects.filter(project_id=project_id)
-            queryset = Sprint.objects.filter(release__in=releases)
 
         else:
             user = self.request.user
@@ -171,8 +185,9 @@ class SprintProjectListView(generics.ListCreateAPIView):
                 project__in=projects,
                 project_id=project_id
             )
-            queryset = Sprint.objects.filter(
-                release__in=releases,
-                )
+
+        queryset = Sprint.objects.filter(
+            release__in=releases,
+            )
 
         return queryset
