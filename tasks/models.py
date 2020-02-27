@@ -8,7 +8,9 @@ class Task(models.Model):
     assignee = models.ForeignKey(
         'user.User',
         on_delete=models.CASCADE,
-        related_name='assigned_tasks'
+        related_name='assigned_tasks',
+        null=True,
+        blank=True,
     )
     initiator = models.ForeignKey(
         'user.User',
@@ -38,8 +40,8 @@ class Task(models.Model):
         related_name='sub_tasks'
     )
     estimation = models.IntegerField(null=True)
-    created = models.DateTimeField()
-    updated = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
