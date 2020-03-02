@@ -82,6 +82,7 @@ class ReleaseDetailView(generics.RetrieveUpdateDestroyAPIView):
         else:
             user = self.request.user
             projects = user.projects.all()
+
             queryset = Release.objects.filter(
                 project__in=projects,
                 project_id=project_id

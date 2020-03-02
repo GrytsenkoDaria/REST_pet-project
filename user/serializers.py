@@ -4,7 +4,7 @@ from user.models import User
 
 
 class UserSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField(read_only=True, )
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(
         min_length=6,
