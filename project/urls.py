@@ -49,7 +49,6 @@ urlpatterns = [
     ),
 
     path(
-        # '<int:pk>/tasks/?release_id=<release_id>&sprint_id=<sprint_id>/',
         '<int:project_pk>/tasks/<int:pk>/',
         TaskDetailFilterView.as_view()
     ),

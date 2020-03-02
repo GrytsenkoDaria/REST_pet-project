@@ -39,6 +39,7 @@ class TaskDetailSerializer(serializers.ModelSerializer):
     release = ReleaseSerializer()
     sprint = SprintSerializer()
     parent_task = TaskSerializer()
+    sub_tasks = TaskSerializer(many=True)
 
     class Meta:
         model = Task

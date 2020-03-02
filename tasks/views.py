@@ -3,13 +3,12 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Task
 from .serializers import TaskSerializer, TaskDetailSerializer
-from user.permissions import IsAdminOrSuperuser
 from choices import Role
 from project.models import Release, Sprint
 
 
 class TaskListView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated, IsAdminOrSuperuser]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = TaskSerializer
 
     def get_queryset(self):
@@ -66,8 +65,8 @@ class TaskListView(generics.ListCreateAPIView):
         return queryset
 
 
-class TaskDetailView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated, IsAdminOrSuperuser]
+class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, ]
     serializer_class = TaskDetailSerializer
 
     def get_queryset(self):
@@ -142,7 +141,7 @@ class TaskDetailView(generics.ListCreateAPIView):
 
 
 class TaskListFilterView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated, IsAdminOrSuperuser]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = TaskSerializer
 
     def get_queryset(self):
@@ -155,50 +154,46 @@ class TaskListFilterView(generics.ListCreateAPIView):
             self.request.user.role == Role.ADMIN or
             self.request.user.is_superuser
         ):
-            releases = Release.objects.filter(project_id=project_id)
-            sprints = Sprint.objects.filter(release__in=releases, )
 
-            queryset = Task.objects.filter(sprint__in=sprints, )
+            queryset = Task.objects.filter(project_id=project_id, )
 
             release_id = self.request.query_params.get('release_id', None)
             sprint_id = self.request.query_params.get('sprint_id', None)
 
             if release_id is not None:
                 queryset = queryset.filter(release_id=release_id)
-            elif sprint_id is not None:
+
+            if sprint_id is not None:
                 queryset = queryset.filter(sprint_id=sprint_id)
 
         else:
             user = self.request.user
             projects = user.projects.all()
 
-            releases = Release.objects.filter(
+            queryset = Task.objects.filter(
                 project__in=projects,
                 project_id=project_id
             )
-            sprints = Sprint.objects.filter(release__in=releases, )
-
-            queryset = Task.objects.filter(sprint__in=sprints, )
 
             release_id = self.request.query_params.get('release_id', None)
             sprint_id = self.request.query_params.get('sprint_id', None)
 
             if release_id is not None:
                 queryset = queryset.filter(release_id=release_id)
-            elif sprint_id is not None:
+
+            if sprint_id is not None:
                 queryset = queryset.filter(sprint_id=sprint_id)
 
         return queryset
 
 
 class TaskDetailFilterView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminOrSuperuser, IsAuthenticated]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = TaskDetailSerializer
 
     def get_queryset(self):
 
         project_id = self.kwargs.get('project_pk')
-        task_id = self.kwargs.get('pk')
 
         queryset = Task.objects.none()
 
@@ -206,40 +201,18 @@ class TaskDetailFilterView(generics.RetrieveUpdateDestroyAPIView):
             self.request.user.role == Role.ADMIN or
             self.request.user.is_superuser
         ):
-            releases = Release.objects.filter(project_id=project_id)
-            sprints = Sprint.objects.filter(release__in=releases, )
 
-            queryset = Task.objects.filter(sprint__in=sprints, )
-
-            release_id = self.request.query_params.get('release_id', None)
-            sprint_id = self.request.query_params.get('sprint_id', None)
-
-            if release_id is not None:
-                queryset = queryset.filter(release_id=release_id)
-            elif sprint_id is not None:
-                queryset = queryset.filter(sprint_id=sprint_id)
+            queryset = Task.objects.filter(
+                project_id=project_id,
+            )
 
         else:
             user = self.request.user
             projects = user.projects.all()
 
-            releases = Release.objects.filter(
-                project__in=projects,
-                project_id=project_id
-            )
-            sprints = Sprint.objects.filter(release__in=releases, )
-
             queryset = Task.objects.filter(
-                sprint__in=sprints,
-                id=task_id,
+                project__in=projects,
+                project_id=project_id,
             )
-
-            release_id = self.request.query_params.get('release_id', None)
-            sprint_id = self.request.query_params.get('sprint_id', None)
-
-            if release_id is not None:
-                queryset = queryset.filter(release_id=release_id)
-            elif sprint_id is not None:
-                queryset = queryset.filter(sprint_id=sprint_id)
 
         return queryset
