@@ -38,7 +38,7 @@ urlpatterns = [
     ),
 
     path(
-        '<int:project_pk>/releases/<int:release_pk>/sprints/<int:sprint_pk>/tasks/<int:pk>/',
+        '<int:project_pk>/releases/<int:release_pk>/sprints/<int:sprint_pk>/tasks/<int:pk>/',  # noqa E501
         TaskDetailView.as_view()
     ),
 
